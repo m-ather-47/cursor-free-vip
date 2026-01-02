@@ -49,11 +49,11 @@ Write-Host "Installer`n" -ForegroundColor $Theme.Info
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 function Install-CursorFreeVIP {
+
     $RepoOwner = "m-ather-47"
     $RepoName  = "cursor-free-vip"
 
-    # 🔹 GitHub Releases (CORRECT)
-    $BaseUrl = "https://github.com/$RepoOwner/$RepoName/releases/"
+    $BaseUrl = "https://github.com/$RepoOwner/$RepoName/resources/"
 
     $ExeName   = "CursorFreeVIP.exe"
     $ConfigIni = "config.ini"
@@ -74,29 +74,18 @@ function Install-CursorFreeVIP {
 
         Write-Styled "Downloading $file..." -Color $Theme.Primary -Prefix "Download"
 
-        $wc = New-Object System.Net.WebClient
-        $wc.Headers.Add("User-Agent", "PowerShell")
+        try {
+            Invoke-WebRequest `
+                -Uri $url `
+                -OutFile $dest `
+                -UseBasicParsing `
+                -Headers @{ "User-Agent" = "PowerShell" }
 
-        $wc.DownloadProgressChanged += {
-            Write-Host (
-                "`rDownloading ${file}: {0}% ({1} MB / {2} MB)" -f
-                $_.ProgressPercentage,
-                [math]::Round($_.BytesReceived / 1MB, 2),
-                [math]::Round($_.TotalBytesToReceive / 1MB, 2)
-            ) -NoNewline -ForegroundColor Cyan
+            Write-Styled "$file downloaded successfully" -Color $Theme.Success -Prefix "Complete"
         }
-
-        $completed = $false
-        $wc.DownloadFileCompleted += { $script:completed = $true }
-
-        $wc.DownloadFileAsync($url, $dest)
-
-        while (-not $completed) {
-            Start-Sleep -Milliseconds 100
+        catch {
+            throw "Failed to download $file"
         }
-
-        Write-Host ""
-        Write-Styled "$file downloaded" -Color $Theme.Success -Prefix "Complete"
     }
 
     $exePath = Join-Path $InstallDir $ExeName
@@ -110,7 +99,7 @@ function Install-CursorFreeVIP {
     ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
 
     if (-not $isAdmin) {
-        Write-Styled "Requesting admin privileges..." -Color $Theme.Warning -Prefix "Admin"
+        Write-Styled "Requesting administrator privileges..." -Color $Theme.Warning -Prefix "Admin"
         Start-Process $exePath -Verb RunAs
     } else {
         Start-Process $exePath
