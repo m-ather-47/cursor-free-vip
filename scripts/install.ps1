@@ -93,7 +93,7 @@ function Install-CursorFreeVIP {
             $wc = New-Object System.Net.WebClient
             $wc.Headers.Add("User-Agent", "PowerShell Script")
             $wc.DownloadProgressChanged += {
-                Write-Host "`rDownloading $file: $($_.ProgressPercentage)% ($([math]::Round($_.BytesReceived/1MB,2)) MB / $([math]::Round($_.TotalBytesToReceive/1MB,2)) MB)" -NoNewline -ForegroundColor Cyan
+                Write-Host "`rDownloading ${file}: $($_.ProgressPercentage)% ($([math]::Round($_.BytesReceived/1MB,2)) MB / $([math]::Round($_.TotalBytesToReceive/1MB,2)) MB)" -NoNewline -ForegroundColor Cyan
             }
             $wc.DownloadFile($url, $dest)
             Write-Host "`r"
