@@ -49,7 +49,7 @@ Write-Host "Installer`n" -ForegroundColor $Theme.Info
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 function Install-CursorFreeVIP {
-    $BaseUrl = "https://github.com/m-ather-47/cursor-free-vip/releases/download/v1.0.0"
+    $BaseUrl = "https://github.com/m-ather-47/cursor-free-vip/tree/master/releases/download/v1.0.0"
 
     $ExeName   = "CursorFreeVIP.exe"
     $ConfigIni = "config.ini"
