@@ -49,6 +49,8 @@ Write-Host "Installer`n" -ForegroundColor $Theme.Info
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 function Install-CursorFreeVIP {
+
+    # ✅ Use Releases download URL, not 'tree/master'
     $BaseUrl = "https://github.com/m-ather-47/cursor-free-vip/releases/download/v1.0.0"
 
     $ExeName   = "CursorFreeVIP.exe"
@@ -71,6 +73,7 @@ function Install-CursorFreeVIP {
         Write-Styled "Downloading $file..." -Color $Theme.Primary -Prefix "Download"
 
         try {
+            # Proper headers + basic parsing for GitHub
             Invoke-WebRequest `
                 -Uri $url `
                 -OutFile $dest `
@@ -80,16 +83,20 @@ function Install-CursorFreeVIP {
             Write-Styled "$file downloaded successfully" -Color $Theme.Success -Prefix "Complete"
         }
         catch {
-            throw "Failed to download $file"
+            Write-Styled "Failed to download $file" -Color $Theme.Error -Prefix "Error"
+            Write-Styled $_.Exception.Message -Color $Theme.Error
+            return
         }
     }
 
     $exePath = Join-Path $InstallDir $ExeName
 
     if (-not (Test-Path $exePath)) {
-        throw "Executable not found after download"
+        Write-Styled "Executable not found after download" -Color $Theme.Error -Prefix "Error"
+        return
     }
 
+    # Run EXE with admin privileges if needed
     $isAdmin = ([Security.Principal.WindowsPrincipal] `
         [Security.Principal.WindowsIdentity]::GetCurrent()
     ).IsInRole([Security.Principal.WindowsBuiltInRole]::Administrator)
