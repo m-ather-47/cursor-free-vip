@@ -71,8 +71,8 @@ function Install-CursorFreeVIP {
 
     # Files to download
     $Files = @(
-        "CursorFreeVIP_windows.exe",
-        "config.json"
+        "CursorFreeVIP.exe",
+        "config.ini"
     )
 
     # Download location
